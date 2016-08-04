@@ -1,0 +1,33 @@
+{
+  "name": "frontend",
+  "authors": [
+    "germanf <ferreyra.ger@gmail.com>"
+  ],
+  "description": "flight search frontend",
+  "main": "index.html",
+  "keywords": [
+    "flight",
+    "search"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "resolutions": {
+    "jquery": "2.2.0",
+    "moment": "2.11.2"
+  },
+  "dependencies": {
+    "bootstrap": "3.3.6",
+    "fontawesome": "4.5.0",
+    "jquery": "2.2.0",
+    "animate.css": "3.5.1",
+    "whirl": "1.0.0",
+    "moment": "2.11.2"
+  }
+}
