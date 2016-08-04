@@ -3,6 +3,7 @@
 var restify = require('restify');
 var bunyan = require('bunyan');
 var API = require('./backend');
+var path = require('path');
 
 // setup logger
 let log = bunyan.createLogger({
@@ -12,17 +13,15 @@ let log = bunyan.createLogger({
   serializers: bunyan.stdSerializers
 });
 
-var port = 3000;
+/**
+ * if the port is undefined in process.env.PORT, it will be 3000 by default
+ */
+var port = process.env.PORT || 3000;
 var api = new API(log, port);
 
 // init API
 api.init()
   .then((server)=> {
-    // serve static files (frontend)
-    server.get(/\/app\/?.*/, restify.serveStatic({
-      directory: __dirname
-    }));
-
     server.listen(
       port, (err) => {
         if (err) {
