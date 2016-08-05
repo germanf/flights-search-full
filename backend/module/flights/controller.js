@@ -83,12 +83,16 @@ function flightSearch(req, res, next) {
       to: query.to
     })
     .then((result)=> {
-      var data = R.map((flight)=>({
-        airline: flight.airline,
-        price: flight.price,
-        start: R.pick(['airportName', 'cityName', 'dateTime'], flight.start),
-        finish: R.pick(['airportName', 'cityName', 'dateTime'], flight.finish)
-      }), result.body);
+      var data = R.map((flight)=>([
+        flight.airline.name,
+        flight.price,
+        flight.start.airportName,
+        flight.start.cityName,
+        moment(flight.start.dateTime).format('YYYY-MM-DD HH:MM'),
+        flight.finish.airportName,
+        flight.finish.cityName,
+        moment(flight.finish.dateTime).format('YYYY-MM-DD HH:MM'),
+      ]), result.body);
       res.json(data);
     })
     .catch((err)=> {
@@ -97,12 +101,6 @@ function flightSearch(req, res, next) {
 }
 
 // ================= PRIVATES =================
-var flightPropsToPick = [
-  'airline', 'price',
-  'start.airportName', 'start.cityName', 'start.dateTime',
-  'finish.airportName', 'finish.cityName', 'finish.dateTime'
-];
-
 var endpoints = {
   airlines: "http://node.locomote.com/code-task/airlines",
   airports: "http://node.locomote.com/code-task/airports",

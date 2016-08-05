@@ -9,5 +9,12 @@
   "bower_components/moment/min/moment-with-locales.min.js",
   "bower_components/nprogress/nprogress.css",
   "bower_components/nprogress/nprogress.js",
-  "bower_components/devbridge-autocomplete/dist/jquery.autocomplete.min.js"
+  "bower_components/devbridge-autocomplete/dist/jquery.autocomplete.min.js",
+  "bower_components/datatables/media/js/jquery.dataTables.min.js",
+  "bower_components/datatables/media/images/**/*",
+  "bower_components/datatables/media/css/dataTables.bootstrap.css",
+  "bower_components/dataTables.fontAwesome/index.css",
+  "bower_components/datatables/media/js/dataTables.bootstrap.js",
+  "bower_components/datatables-colvis/js/dataTables.colVis.js",
+  "bower_components/datatables-colvis/css/dataTables.colVis.css"
 ]

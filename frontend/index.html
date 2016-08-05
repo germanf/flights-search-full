@@ -19,6 +19,10 @@
   <link rel="stylesheet" href="/vendor/animate.css/animate.min.css">
   <!-- WHIRL (spinners)-->
   <link rel="stylesheet" href="/vendor/whirl/dist/whirl.css">
+  <!-- DATATABLES-->
+  <link rel="stylesheet" href="../vendor/datatables-colvis/css/dataTables.colVis.css">
+  <link rel="stylesheet" href="../vendor/datatables/media/css/dataTables.bootstrap.css">
+  <link rel="stylesheet" href="../vendor/dataTables.fontAwesome/index.css">
   <!-- =============== BOOTSTRAP STYLES ===============-->
   <link rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css" id="bscss">
   <!-- =============== APP STYLES ===============-->
@@ -45,15 +49,18 @@
             <div class="row">
               <div class="form-group col-lg-3">
                 <label>Departure date</label>
-                <input name="date" id="departure-date" type="date" class="form-control m-b" autocomplete="off" required="required">
+                <input name="date" id="departure-date" type="date" class="form-control m-b" autocomplete="off"
+                       required="required">
               </div>
               <div class="form-group col-lg-4">
                 <label>Origin airport</label>
-                <input type="text" name="origin" id="origin-airport" class="form-control m-b" autocomplete="off" required="required">
+                <input type="text" name="origin" id="origin-airport" class="form-control m-b" autocomplete="off"
+                       required="required">
               </div>
               <div class="form-group col-lg-4">
                 <label>Destination airport</label>
-                <input type="text" name="destination" id="destination-airport" class="form-control m-b" autocomplete="off"  required="required">
+                <input type="text" name="destination" id="destination-airport" class="form-control m-b"
+                       autocomplete="off" required="required">
               </div>
             </div>
             <div class="row">
@@ -63,80 +70,131 @@
             </div>
             <!--</div>-->
           </form>
-          <!-- START panel-->
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <a href="#" data-tool="panel-refresh" data-toggle="tooltip" title="Refresh Panel" class="pull-right">
-                <em class="fa fa-refresh"></em>
-              </a>Search Results
-            </div>
-            <!-- START table-responsive-->
-            <div class="table-responsive">
-              <table class="table table-striped table-bordered table-hover">
-                <thead>
-                <tr>
-                  <th data-check-all="">
-                    <div data-toggle="tooltip" data-title="Check All" class="checkbox c-checkbox">
-                      <label>
-                        <input type="checkbox">
-                        <span class="fa fa-check"></span>
-                      </label>
-                    </div>
-                  </th>
-                  <th>Description</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                  <td>
-                    <div class="checkbox c-checkbox">
-                      <label>
-                        <input type="checkbox">
-                        <span class="fa fa-check"></span>
-                      </label>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="media-box">
-                      <a href="#" class="pull-left">
-                        <img src="img/airplane.png" alt="" class="media-box-object img-responsive img-rounded thumb64">
-                      </a>
-                      <div class="media-box-body">
-                        <div class="pull-right btn btn-info btn-sm">View</div>
-                        <h4 class="media-box-heading">Product 1</h4>
-                        <small class="text-muted">Category1, Category2</small>
-                        <p>Sed gravida auctor odio. Sed viverra rutrum hendrerit. Praesent dapibus justo dolor.
-                          Suspendisse rhoncus consectetur eros vehicula accumsan.</p>
+          <!-- START row-->
+          <div class="row">
+            <div class="col-lg-12">
+              <!-- START panel-->
+              <div id="panel-results" class="panel panel-default">
+                <div class="panel-heading">Flights results</div>
+                <div class="panel-body">
+                  <div role="tabpanel">
+                    <!-- Nav tabs-->
+                    <ul role="tablist" class="nav nav-tabs">
+                      <li role="presentation" id="tab-flight-day-minus2" class="standard"><a href="#flight-day-minus2" aria-controls="flight-day-minus2" role="tab"
+                                                 data-toggle="tab">2 days before</a>
+                      </li>
+                      <li role="presentation" id="tab-flight-day-minus1" class="standard"><a href="#flight-day-minus1" aria-controls="flight-day-minus1" role="tab"
+                                                 data-toggle="tab">1 day before</a>
+                      </li>
+                      <li role="presentation" id="tab-flight-day" class="standard active"><a href="#flight-day" aria-controls="profile"
+                                                                role="flight-day" data-toggle="tab">Departure day</a>
+                      </li>
+                      <li role="presentation" id="tab-flight-day-plus1" class="standard"><a href="#flight-day-plus1" aria-controls="flight-day-plus1" role="tab"
+                                                 data-toggle="tab">1 day after</a>
+                      </li>
+                      <li role="presentation" id="tab-flight-day-plus2" class="standard"><a href="#flight-day-plus2" aria-controls="flight-day-plus2" role="tab"
+                                                 data-toggle="tab">2 days after</a>
+                      </li>
+                    </ul>
+                    <!-- Tab panes-->
+                    <div class="tab-content">
+                      <div id="flight-day-minus2" role="tabpanel" class="tab-pane">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-hover" id="table-flight-day-minus2">
+                            <thead>
+                            <tr>
+                              <th>Airline</th>
+                              <th>Price</th>
+                              <th>Depart</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                              <th>Arrive</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                            </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                      <div id="flight-day-minus1" role="tabpanel" class="tab-pane">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-hover" id="table-flight-day-minus1">
+                            <thead>
+                            <tr>
+                              <th>Airline</th>
+                              <th>Price</th>
+                              <th>Depart</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                              <th>Arrive</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                            </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                      <div id="flight-day" role="tabpanel" class="tab-pane active">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-hover" id="table-flight-day">
+                            <thead>
+                            <tr>
+                              <th>Airline</th>
+                              <th>Price</th>
+                              <th>Depart</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                              <th>Arrive</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                            </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                      <div id="flight-day-plus1" role="tabpanel" class="tab-pane">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-hover" id="table-flight-day-plus1">
+                            <thead>
+                            <tr>
+                              <th>Airline</th>
+                              <th>Price</th>
+                              <th>Depart</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                              <th>Arrive</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                            </tr>
+                            </thead>
+                          </table>
+                        </div>
+                      </div>
+                      <div id="flight-day-plus2" role="tabpanel" class="tab-pane">
+                        <div class="table-responsive">
+                          <table class="table table-striped table-hover" id="table-flight-day-plus2">
+                            <thead>
+                            <tr>
+                              <th>Airline</th>
+                              <th>Price</th>
+                              <th>Depart</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                              <th>Arrive</th>
+                              <th>City</th>
+                              <th>Date Time</th>
+                            </tr>
+                            </thead>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </div>
-            <!-- END table-responsive-->
-            <div class="panel-footer">
-              <div class="row">
-                <div class="col-lg-2">
-                  <button class="btn btn-sm btn-default">Clear</button>
-                </div>
-                <div class="col-lg-8"></div>
-                <div class="col-lg-2 text-right">
-                  <ul class="pagination pagination-sm">
-                    <li class="active"><a href="#">1</a>
-                    </li>
-                    <li><a href="#">2</a>
-                    </li>
-                    <li><a href="#">3</a>
-                    </li>
-                    <li><a href="#">»</a>
-                    </li>
-                  </ul>
+                  </div>
                 </div>
               </div>
+              <!-- END panel-->
             </div>
           </div>
-          <!-- END panel-->
         </div>
       </div>
     </div>
@@ -155,6 +213,10 @@
 <script src="../vendor/moment/min/moment-with-locales.min.js"></script>
 <!-- AUTOCOMPLETE-->
 <script src="../vendor/devbridge-autocomplete/dist/jquery.autocomplete.min.js"></script>
+<!-- DATATABLES-->
+<script src="../vendor/datatables/media/js/jquery.dataTables.min.js"></script>
+<script src="../vendor/datatables-colvis/js/dataTables.colVis.js"></script>
+<script src="../vendor/datatables/media/js/dataTables.bootstrap.js"></script>
 <!-- =============== APP SCRIPTS ===============-->
 <script src="js/app.js"></script>
 </body>

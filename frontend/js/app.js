@@ -10,6 +10,20 @@
   // endpoint base url
   var baseUrl = "http://localhost:3000/api/v1/public/flight/"; // the script where you handle the form input.
 
+  // Flight data tables
+  var flightDayMinus2 = $('#table-flight-day-minus2').dataTable(),
+    flightDayMinus1 = $('#table-flight-day-minus1').dataTable(),
+    flightDay = $('#table-flight-day').dataTable(),
+    flightDayPlus1 = $('#table-flight-day-plus1').dataTable(),
+    flightDayPlus2 = $('#table-flight-day-plus2').dataTable();
+
+  // Flight data
+  var flightDataDayMinus2 = [],
+    flightDataDayMinus1 = [],
+    flightDataDay = [],
+    flightDataDayPlus1 = [],
+    flightDataDayPlus2 = [];
+
   // Site Preloader
   // -----------------------------------
   NProgress.start();
@@ -26,6 +40,7 @@
       minChars: 3,
       serviceUrl: baseUrl + 'airports',
       paramName: 'q',
+      autoSelectFirst: true,
       transformResult: function (response) {
         return {
           suggestions: $.map(JSON.parse(response), function (data) {
@@ -57,7 +72,7 @@
   };
 
   /**
-   * Build all flight searchs for the given departure date, airlines, origins and destinations
+   * Build all flight searchs for the given departure date, airlines
    * @param urlBase
    * @param departureDate
    * @param airlines
@@ -82,14 +97,25 @@
    */
   var execFlightSearchs = function (urlFlightSearchBase, departureDate, airlines) {
     var flightsInDepartureDay = buildFlightSearchs(urlFlightSearchBase, departureDate, airlines);
-    $.when.all(flightsInDepartureDay)
-      .then(function (results) {
-        results.map(function (result) {
-          var flight = JSON.parse(result[0]);
-          console.log(flight);
-        });
-      });
+    return $.when.all(flightsInDepartureDay);
   }
+
+  /**
+   * Clear all datasources before to load the new data
+   */
+  var clearDataSources = function () {
+    flightDataDayMinus2 = [];
+    flightDataDayMinus1 = [];
+    flightDataDay = [];
+    flightDataDayPlus1 = [];
+    flightDataDayPlus2 = [];
+
+    flightDayMinus2.fnClearTable();
+    flightDayMinus1.fnClearTable();
+    flightDay.fnClearTable();
+    flightDayPlus1.fnClearTable();
+    flightDayPlus2.fnClearTable();
+  };
 
   /**
    * exec the all flight searchs, +-2 days from departure day
@@ -105,11 +131,66 @@
     var oneDayAfter = moment(departureDate, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
     var twoDaysAfter = moment(departureDate, 'YYYY-MM-DD').add(2, 'days').format('YYYY-MM-DD');
 
-    execFlightSearchs(urlFlightSearchBase, departureDate, airlines);
-    execFlightSearchs(urlFlightSearchBase, oneDayBefore, airlines);
-    execFlightSearchs(urlFlightSearchBase, twoDaysBefore, airlines);
-    execFlightSearchs(urlFlightSearchBase, oneDayAfter, airlines);
-    execFlightSearchs(urlFlightSearchBase, twoDaysAfter, airlines);
+    clearDataSources();
+
+    execFlightSearchs(urlFlightSearchBase, departureDate, airlines)
+      .then(function (results) {
+        results.map(function (result) {
+          var flight = JSON.parse(result[0]);
+          flightDataDay = flightDataDay.concat(flight);
+        });
+      }).always(function () {
+      flightDay.fnAddData(flightDataDay);
+      $("#content-wrapper").removeClass('whirl');
+      $("#tab-flight-day-minus1").addClass('whirl');
+      $("#tab-flight-day-minus2").addClass('whirl');
+      $("#tab-flight-day-plus1").addClass('whirl');
+      $("#tab-flight-day-plus2").addClass('whirl');
+    });
+
+    execFlightSearchs(urlFlightSearchBase, oneDayBefore, airlines)
+      .then(function (results) {
+        results.map(function (result) {
+          var flight = JSON.parse(result[0]);
+          flightDataDayMinus1 = flightDataDayMinus1.concat(flight);
+        });
+      }).always(function () {
+      flightDayMinus1.fnAddData(flightDataDayMinus1);
+      $("#tab-flight-day-minus1").removeClass('whirl');
+    });
+
+    execFlightSearchs(urlFlightSearchBase, twoDaysBefore, airlines)
+      .then(function (results) {
+        results.map(function (result) {
+          var flight = JSON.parse(result[0]);
+          flightDataDayMinus2 = flightDataDayMinus2.concat(flight);
+        });
+      }).always(function () {
+      flightDayMinus2.fnAddData(flightDataDayMinus2);
+      $("#tab-flight-day-minus2").removeClass('whirl');
+    });
+
+    execFlightSearchs(urlFlightSearchBase, oneDayAfter, airlines)
+      .then(function (results) {
+        results.map(function (result) {
+          var flight = JSON.parse(result[0]);
+          flightDataDayPlus1 = flightDataDayPlus1.concat(flight);
+        });
+      }).always(function () {
+      flightDayPlus1.fnAddData(flightDataDayPlus1);
+      $("#tab-flight-day-plus1").addClass('whirl');
+    });
+
+    execFlightSearchs(urlFlightSearchBase, twoDaysAfter, airlines)
+      .then(function (results) {
+        results.map(function (result) {
+          var flight = JSON.parse(result[0]);
+          flightDataDayPlus2 = flightDataDayPlus2.concat(flight);
+        });
+      }).always(function () {
+      flightDayPlus2.fnAddData(flightDataDayPlus2);
+      $("#tab-flight-day-plus2").removeClass('whirl');
+    });
   }
 
   /**
@@ -125,9 +206,7 @@
     $.get(urlAirlines)
       .done(function (airlines) {
         airlines = JSON.parse(airlines);
-
         execAllFlightSearchs(urlFlightSearchBase, departureDate, airlines);
-        $("#content-wrapper").removeClass('whirl');
       });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.

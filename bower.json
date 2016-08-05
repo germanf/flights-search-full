@@ -30,6 +30,9 @@
     "whirl": "1.0.0",
     "moment": "2.11.2",
     "nprogress": "^0.2.0",
-    "devbridge-autocomplete": "^1.2.26"
+    "devbridge-autocomplete": "^1.2.26",
+    "datatables": "1.10.10",
+    "datatables-colvis": "1.1.2",
+    "dataTables.fontAwesome": "https://cdn.datatables.net/plug-ins/1.10.10/integration/font-awesome/dataTables.fontAwesome.css"
   }
 }
