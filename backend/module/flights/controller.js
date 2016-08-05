@@ -46,7 +46,7 @@ function airports(req, res, next) {
     .get(endpoints.airports)
     .query({q: query.q})
     .then((result)=> {
-      var data = R.map(R.pick(['airportCode']), result.body);
+      var data = R.map(R.pick(['airportCode', 'airportName', 'cityName']), result.body);
       res.json(data);
     })
     .catch((err)=> {

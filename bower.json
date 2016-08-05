@@ -29,6 +29,7 @@
     "animate.css": "3.5.1",
     "whirl": "1.0.0",
     "moment": "2.11.2",
-    "nprogress": "^0.2.0"
+    "nprogress": "^0.2.0",
+    "devbridge-autocomplete": "^1.2.26"
   }
 }

@@ -5,6 +5,7 @@
   var $win = $(window);
   var $doc = $(document);
   var $body = $('body');
+  var searchFilters = {from: '', to: '', date: ''};
 
   // endpoint base url
   var baseUrl = "http://localhost:3000/api/v1/public/flight/"; // the script where you handle the form input.
@@ -18,7 +19,31 @@
     $body.addClass('site-loaded');
   });
 
+  // Autocomplete
   //
+  function setAutocomplete(idElement, cbk) {
+    $(idElement).autocomplete({
+      minChars: 3,
+      serviceUrl: baseUrl + 'airports',
+      paramName: 'q',
+      transformResult: function (response) {
+        return {
+          suggestions: $.map(JSON.parse(response), function (data) {
+            return {value: data.airportName, data: data.airportCode};
+          })
+        };
+      },
+      onSelect: cbk
+    });
+  }
+
+  setAutocomplete('#origin-airport', function (suggestion) {
+    searchFilters.from = suggestion.data
+  });
+  setAutocomplete('#destination-airport', function (suggestion) {
+    searchFilters.to = suggestion.data
+  });
+
   // Search
   //
   /**
@@ -40,23 +65,13 @@
    * @param destinations
    * @returns {*}
    */
-  var buildFlightSearchs = function (urlBase, departureDate, airlines, origins, destinations) {
+  var buildFlightSearchs = function (urlBase, departureDate, airlines) {
     var flightRequests = [];
 
     airlines.map(function (airline) {
       var flighSearchUrl = urlBase + airline.code;
-
-      return origins.map(function (origin) {
-        return destinations.map(function (destination) {
-          var params = {
-            date: departureDate,
-            from: origin.airportCode,
-            to: destination.airportCode,
-          };
-
-          flightRequests.push(deferFlightSearch(flighSearchUrl, params));
-        })
-      })
+      searchFilters.date = departureDate;
+      flightRequests.push(deferFlightSearch(flighSearchUrl, searchFilters));
     });
 
     return flightRequests;
@@ -65,8 +80,8 @@
   /**
    * exec call for the given departure date
    */
-  var execFlightSearchs = function (urlFlightSearchBase, departureDate, airlines, origins, destinations) {
-    var flightsInDepartureDay = buildFlightSearchs(urlFlightSearchBase, departureDate, airlines, origins, destinations);
+  var execFlightSearchs = function (urlFlightSearchBase, departureDate, airlines) {
+    var flightsInDepartureDay = buildFlightSearchs(urlFlightSearchBase, departureDate, airlines);
     $.when.all(flightsInDepartureDay)
       .then(function (results) {
         results.map(function (result) {
@@ -84,17 +99,17 @@
    * @param origins
    * @param destinations
    */
-  var execAllFlightSearchs = function (urlFlightSearchBase, departureDate, airlines, origins, destinations) {
-    var twoDaysBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -2).format('YYYY-MM-DD');
-    var oneDayBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -1).format('YYYY-MM-DD');
-    var oneDayAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 1).format('YYYY-MM-DD');
-    var twoDaysAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 2).format('YYYY-MM-DD');
+  var execAllFlightSearchs = function (urlFlightSearchBase, departureDate, airlines) {
+    var twoDaysBefore = moment(departureDate, 'YYYY-MM-DD').add(-2, 'days').format('YYYY-MM-DD');
+    var oneDayBefore = moment(departureDate, 'YYYY-MM-DD').add(-1, 'days').format('YYYY-MM-DD');
+    var oneDayAfter = moment(departureDate, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD');
+    var twoDaysAfter = moment(departureDate, 'YYYY-MM-DD').add(2, 'days').format('YYYY-MM-DD');
 
-    execFlightSearchs(urlFlightSearchBase, departureDate, airlines, origins, destinations);
-    execFlightSearchs(urlFlightSearchBase, oneDayBefore, airlines, origins, destinations);
-    execFlightSearchs(urlFlightSearchBase, twoDaysBefore, airlines, origins, destinations);
-    execFlightSearchs(urlFlightSearchBase, oneDayAfter, airlines, origins, destinations);
-    execFlightSearchs(urlFlightSearchBase, twoDaysAfter, airlines, origins, destinations);
+    execFlightSearchs(urlFlightSearchBase, departureDate, airlines);
+    execFlightSearchs(urlFlightSearchBase, oneDayBefore, airlines);
+    execFlightSearchs(urlFlightSearchBase, twoDaysBefore, airlines);
+    execFlightSearchs(urlFlightSearchBase, oneDayAfter, airlines);
+    execFlightSearchs(urlFlightSearchBase, twoDaysAfter, airlines);
   }
 
   /**
@@ -102,27 +117,18 @@
    */
   $("#form-search").submit(function (e) {
     var urlAirlines = baseUrl + 'airlines',
-      urlAirport = baseUrl + 'airports',
-      originAirport = $('#origin-airport').val(),
-      destinationAirport = $('#destination-airport').val(),
       urlFlightSearchBase = baseUrl + 'search/',
       departureDate = moment($('#departure-date').val()).format('YYYY-MM-DD');
 
     $("#content-wrapper").addClass('whirl');
 
-    // get all airlines & airports based on origin and destination inputs
-    $.when(
-      $.get(urlAirlines),
-      $.get(urlAirport, {q: originAirport}),
-      $.get(urlAirport, {q: destinationAirport})
-    ).then(function (airlines, origins, destinations) {
-      airlines = JSON.parse(airlines[0]);
-      origins = JSON.parse(origins[0]);
-      destinations = JSON.parse(destinations[0]);
+    $.get(urlAirlines)
+      .done(function (airlines) {
+        airlines = JSON.parse(airlines);
 
-      execAllFlightSearchs(urlFlightSearchBase, departureDate, airlines, origins, destinations);
-      $("#content-wrapper").removeClass('whirl');
-    });
+        execAllFlightSearchs(urlFlightSearchBase, departureDate, airlines);
+        $("#content-wrapper").removeClass('whirl');
+      });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.
   });
