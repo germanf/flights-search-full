@@ -19,6 +19,6 @@ To add a new component install with *bower install* and add the path to css|js i
 ## Run the app
 To run the backend & frontend run the next command
 
-`npm start`
+`sh start.sh`
 
 
