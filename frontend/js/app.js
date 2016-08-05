@@ -85,10 +85,10 @@
    * @param destinations
    */
   var execAllFlightSearchs = function (urlFlightSearchBase, departureDate, airlines, origins, destinations) {
-    var twoDaysBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -2);
-    var oneDayBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -1);
-    var oneDayAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 1);
-    var twoDaysAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 2);
+    var twoDaysBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -2).format('YYYY-MM-DD');
+    var oneDayBefore = moment(departureDate, 'YYYY-MM-DD').add('days', -1).format('YYYY-MM-DD');
+    var oneDayAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 1).format('YYYY-MM-DD');
+    var twoDaysAfter = moment(departureDate, 'YYYY-MM-DD').add('days', 2).format('YYYY-MM-DD');
 
     execFlightSearchs(urlFlightSearchBase, departureDate, airlines, origins, destinations);
     execFlightSearchs(urlFlightSearchBase, oneDayBefore, airlines, origins, destinations);
