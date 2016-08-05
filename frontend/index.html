@@ -6,7 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="Locomote Flights Search">
   <meta name="keywords" content="locomote, flights search">
-  <title>Angle - Bootstrap Admin Template</title>
+  <title>Locomote Flight Search</title>
+  <!-- PREALOADER (loads asap)-->
+  <link rel="stylesheet" href="vendor/nprogress/nprogress.css">
+  <script src="vendor/nprogress/nprogress.js"></script>
+  <!-- FAVICON-->
+  <link rel="icon" href="favicon.ico">
   <!-- =============== VENDOR STYLES ===============-->
   <!-- FONT AWESOME-->
   <link rel="stylesheet" href="/vendor/fontawesome/css/font-awesome.min.css">
@@ -21,6 +26,10 @@
 </head>
 
 <body>
+<!-- WEBSITE PRELOADER-->
+<div class="preloader">
+  <div class="loading">Loading ...</div>
+</div>
 <div class="wrapper">
   <!-- Main section-->
   <section>
@@ -31,23 +40,29 @@
       </h3>
       <div class="row">
         <div class="col-lg-8 col-lg-offset-2">
-          <div class="form-group mb-xl">
-            <input type="text" placeholder="Search products, people, apps, etc." class="form-control mb">
-            <div class="clearfix">
-              <button type="button" class="pull-left btn btn-default">Search</button>
-              <div class="pull-right">
-                <label class="checkbox-inline c-checkbox">
-                  <input id="inlineCheckbox10" type="checkbox" value="option1">
-                  <span class="fa fa-check"></span>Products</label>
-                <label class="checkbox-inline c-checkbox">
-                  <input id="inlineCheckbox20" type="checkbox" value="option2">
-                  <span class="fa fa-check"></span>People</label>
-                <label class="checkbox-inline c-checkbox">
-                  <input id="inlineCheckbox30" type="checkbox" value="option3">
-                  <span class="fa fa-check"></span>Apps</label>
+          <!--<div class="form-group mb-sm">-->
+          <form id="form-search" method="post" action="#" class="form-group mb-sm">
+            <div class="row">
+              <div class="form-group col-lg-3">
+                <label>Departure date</label>
+                <input name="date" id="departure-date" type="date" class="form-control m-b" required="required">
+              </div>
+              <div class="form-group col-lg-4">
+                <label>Origin airport</label>
+                <input type="text" name="origin" id="origin-airport" class="form-control m-b" required="required">
+              </div>
+              <div class="form-group col-lg-4">
+                <label>Destination airport</label>
+                <input type="text" name="destination" id="destination-airport" class="form-control m-b" required="required">
               </div>
             </div>
-          </div>
+            <div class="row">
+              <div class="form-group col-lg-3">
+                <button type="submit" class="pull-left btn btn-default">Search</button>
+              </div>
+            </div>
+          <!--</div>-->
+            </form>
           <!-- START panel-->
           <div class="panel panel-default">
             <div class="panel-heading">
