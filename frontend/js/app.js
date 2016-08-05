@@ -108,6 +108,8 @@
       urlFlightSearchBase = baseUrl + 'search/',
       departureDate = moment($('#departure-date').val()).format('YYYY-MM-DD');
 
+    $("#content-wrapper").addClass('whirl');
+
     // get all airlines & airports based on origin and destination inputs
     $.when(
       $.get(urlAirlines),
@@ -119,6 +121,7 @@
       destinations = JSON.parse(destinations[0]);
 
       execAllFlightSearchs(urlFlightSearchBase, departureDate, airlines, origins, destinations);
+      $("#content-wrapper").removeClass('whirl');
     });
 
     e.preventDefault(); // avoid to execute the actual submit of the form.

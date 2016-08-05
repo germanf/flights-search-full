@@ -1,6 +1,6 @@
 "use strict";
 
-var Promise = require('bluebird');
+var R = require('ramda');
 var _ = require('lodash');
 var moment = require('moment');
 var request = require('superagent');
@@ -17,7 +17,8 @@ function airlines(req, res, next) {
   request
     .get(endpoints.airlines)
     .then((result)=> {
-      res.json(result.body);
+      var data = R.map(R.pick(["code"]), result.body);
+      res.json(data);
     })
     .catch((err)=> {
       res.json(500, err);
@@ -45,7 +46,8 @@ function airports(req, res, next) {
     .get(endpoints.airports)
     .query({q: query.q})
     .then((result)=> {
-      res.json(result.body);
+      var data = R.map(R.pick(['airportCode']), result.body);
+      res.json(data);
     })
     .catch((err)=> {
       res.json(500, err);
@@ -81,7 +83,13 @@ function flightSearch(req, res, next) {
       to: query.to
     })
     .then((result)=> {
-      res.json(result.body);
+      var data = R.map((flight)=>({
+        airline: flight.airline,
+        price: flight.price,
+        start: R.pick(['airportName', 'cityName', 'dateTime'], flight.start),
+        finish: R.pick(['airportName', 'cityName', 'dateTime'], flight.finish)
+      }), result.body);
+      res.json(data);
     })
     .catch((err)=> {
       res.json(500, err.response.text);
@@ -89,8 +97,12 @@ function flightSearch(req, res, next) {
 }
 
 // ================= PRIVATES =================
+var flightPropsToPick = [
+  'airline', 'price',
+  'start.airportName', 'start.cityName', 'start.dateTime',
+  'finish.airportName', 'finish.cityName', 'finish.dateTime'
+];
 
-//
 var endpoints = {
   airlines: "http://node.locomote.com/code-task/airlines",
   airports: "http://node.locomote.com/code-task/airports",
