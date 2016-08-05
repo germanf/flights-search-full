@@ -178,7 +178,7 @@
         });
       }).always(function () {
       flightDayPlus1.fnAddData(flightDataDayPlus1);
-      $("#tab-flight-day-plus1").addClass('whirl');
+      $("#tab-flight-day-plus1").removeClass('whirl');
     });
 
     execFlightSearchs(urlFlightSearchBase, twoDaysAfter, airlines)
